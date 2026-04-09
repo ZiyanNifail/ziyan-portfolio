@@ -355,7 +355,7 @@ export default function Hero() {
             }}
           >
             <Image
-              src="/ziyan.jpg"
+              src="/ziyanphoto.jpg"
               alt="Ziyan Nifail"
               fill
               style={{ objectFit: "cover", objectPosition: "center top" }}
