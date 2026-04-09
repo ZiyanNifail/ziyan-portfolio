@@ -67,7 +67,6 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
       style={{
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0)" : "translateY(32px)",
-        transition: `opacity 0.7s ease ${index * 0.15}s, transform 0.7s ease ${index * 0.15}s`,
         background: hovered ? "rgba(0,48,73,0.8)" : "rgba(0,48,73,0.45)",
         border: hovered
           ? "1px solid rgba(193,18,31,0.5)"
