@@ -32,10 +32,22 @@ function BlurText({ text, delay = 0, className = "" }: BlurTextProps) {
   );
 }
 
+function useMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return mobile;
+}
+
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const mobile = useMobile();
 
   useEffect(() => {
     setMounted(true);
@@ -105,7 +117,7 @@ export default function Hero() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "36px 48px 0",
+          padding: mobile ? "20px 20px 0" : "36px 48px 0",
         }}
       >
         <div
@@ -120,9 +132,10 @@ export default function Hero() {
           ZN / Portfolio
         </div>
 
+        {/* Desktop links */}
         <ul
           style={{
-            display: "flex",
+            display: mobile ? "none" : "flex",
             gap: "32px",
             listStyle: "none",
           }}
@@ -166,29 +179,120 @@ export default function Hero() {
           })}
         </ul>
 
-        <a
-          href="#contact"
-          style={{
-            fontSize: "11px",
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            color: "var(--papaya)",
-            background: "var(--brick)",
-            border: "none",
-            padding: "12px 26px",
-            cursor: "pointer",
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 500,
-            textDecoration: "none",
-            display: "inline-block",
-            transition: "background 0.2s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "var(--molten)")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "var(--brick)")}
-        >
-          Contact Me
-        </a>
+        {/* Desktop CTA */}
+        {!mobile && (
+          <a
+            href="#contact"
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              color: "var(--papaya)",
+              background: "var(--brick)",
+              border: "none",
+              padding: "12px 26px",
+              cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 500,
+              textDecoration: "none",
+              display: "inline-block",
+              transition: "background 0.2s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "var(--molten)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "var(--brick)")}
+          >
+            Contact Me
+          </a>
+        )}
+
+        {/* Hamburger (mobile only) */}
+        {mobile && (
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{
+              background: "none",
+              border: "1px solid rgba(102,155,188,0.35)",
+              color: "var(--papaya)",
+              cursor: "pointer",
+              padding: "8px 14px",
+              fontSize: "16px",
+              lineHeight: 1,
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            {menuOpen ? "✕" : "☰"}
+          </button>
+        )}
       </nav>
+
+      {/* Mobile full-screen menu */}
+      {mobile && menuOpen && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,25,45,0.97)",
+            zIndex: 100,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "36px",
+          }}
+        >
+          <button
+            onClick={() => setMenuOpen(false)}
+            style={{
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              background: "none",
+              border: "1px solid rgba(102,155,188,0.35)",
+              color: "var(--papaya)",
+              cursor: "pointer",
+              padding: "8px 14px",
+              fontSize: "16px",
+            }}
+          >
+            ✕
+          </button>
+          {navLinks.map((link) => (
+            <a
+              key={link}
+              href={`#${link.toLowerCase()}`}
+              onClick={() => setMenuOpen(false)}
+              style={{
+                fontSize: "28px",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: activeSection === link.toLowerCase() ? "var(--brick)" : "var(--papaya)",
+                textDecoration: "none",
+                fontFamily: "'Playfair Display', serif",
+                fontWeight: 700,
+              }}
+            >
+              {link}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              marginTop: "16px",
+              background: "var(--brick)",
+              color: "var(--papaya)",
+              padding: "14px 40px",
+              fontSize: "12px",
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              fontWeight: 500,
+            }}
+          >
+            Contact Me
+          </a>
+        </div>
+      )}
 
       {/* Hero grid */}
       <div
@@ -196,9 +300,9 @@ export default function Hero() {
           position: "relative",
           zIndex: 5,
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "48px",
-          padding: "72px 48px 80px",
+          gridTemplateColumns: mobile ? "1fr" : "1fr 1fr",
+          gap: mobile ? "32px" : "48px",
+          padding: mobile ? "40px 20px 60px" : "72px 48px 80px",
           alignItems: "center",
         }}
       >
@@ -347,8 +451,8 @@ export default function Hero() {
           <div
             style={{
               width: "100%",
-              maxWidth: "340px",
-              height: "260px",
+              maxWidth: mobile ? "100%" : "340px",
+              height: mobile ? "220px" : "260px",
               overflow: "hidden",
               border: "1px solid rgba(102,155,188,0.2)",
               position: "relative",
@@ -383,8 +487,8 @@ export default function Hero() {
             style={{
               background: "rgba(0,48,73,0.65)",
               border: "1px solid rgba(102,155,188,0.2)",
-              padding: "32px 28px",
-              maxWidth: "340px",
+              padding: mobile ? "24px 20px" : "32px 28px",
+              maxWidth: mobile ? "100%" : "340px",
               position: "relative",
               transition: "transform 0.25s ease, border-color 0.25s",
             }}
@@ -508,6 +612,7 @@ export default function Hero() {
 
       {/* Scroll cue */}
       <div
+        className="scroll-cue"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -543,7 +648,7 @@ export default function Hero() {
       <style suppressHydrationWarning>{`
         .name-first {
           font-family: 'Playfair Display', serif;
-          font-size: clamp(52px, 7vw, 82px);
+          font-size: clamp(42px, 10vw, 82px);
           font-weight: 700;
           color: var(--papaya);
           line-height: 1;
@@ -551,7 +656,7 @@ export default function Hero() {
         }
         .name-last {
           font-family: 'Playfair Display', serif;
-          font-size: clamp(52px, 7vw, 82px);
+          font-size: clamp(42px, 10vw, 82px);
           font-weight: 900;
           color: var(--brick);
           line-height: 1;
@@ -560,6 +665,9 @@ export default function Hero() {
         @keyframes scrollPulse {
           0%, 100% { transform: scaleY(1); opacity: 0.2; }
           50% { transform: scaleY(1.4); opacity: 0.5; }
+        }
+        @media (max-width: 767px) {
+          .scroll-cue { display: none; }
         }
       `}</style>
     </section>

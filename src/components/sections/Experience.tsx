@@ -67,9 +67,21 @@ function useInView(threshold = 0.1) {
   return { ref, inView };
 }
 
+function useMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return mobile;
+}
+
 function ExperienceItem({ exp, index }: { exp: typeof experiences[0]; index: number }) {
   const { ref, inView } = useInView();
   const [hovered, setHovered] = useState(false);
+  const mobile = useMobile();
 
   return (
     <div
@@ -81,8 +93,8 @@ function ExperienceItem({ exp, index }: { exp: typeof experiences[0]; index: num
         transform: inView ? "translateX(0)" : "translateX(-30px)",
         transition: `opacity 0.7s ease ${index * 0.12}s, transform 0.7s ease ${index * 0.12}s`,
         display: "grid",
-        gridTemplateColumns: "200px 1fr",
-        gap: "0 48px",
+        gridTemplateColumns: mobile ? "1fr" : "200px 1fr",
+        gap: mobile ? "12px 0" : "0 48px",
         padding: "36px 0",
         borderBottom: "1px solid rgba(102,155,188,0.1)",
         position: "relative",
@@ -211,13 +223,14 @@ function ExperienceItem({ exp, index }: { exp: typeof experiences[0]; index: num
 
 export default function Experience() {
   const { ref: headRef, inView: headInView } = useInView(0.2);
+  const mobile = useMobile();
 
   return (
     <section
       id="experience"
       style={{
         background: "#002236",
-        padding: "120px 48px",
+        padding: mobile ? "80px 20px" : "120px 48px",
         position: "relative",
         overflow: "hidden",
       }}

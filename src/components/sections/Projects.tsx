@@ -245,15 +245,27 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
   );
 }
 
+function useMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return mobile;
+}
+
 export default function Projects() {
   const { ref: headRef, inView: headInView } = useInView(0.2);
+  const mobile = useMobile();
 
   return (
     <section
       id="projects"
       style={{
         background: "var(--deep)",
-        padding: "120px 48px",
+        padding: mobile ? "80px 20px" : "120px 48px",
         position: "relative",
         overflow: "hidden",
       }}

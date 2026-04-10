@@ -16,8 +16,20 @@ function useInView(threshold = 0.15) {
   return { ref, inView };
 }
 
+function useMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return mobile;
+}
+
 export default function Contact() {
   const { ref, inView } = useInView();
+  const mobile = useMobile();
 
   const contacts = [
     { label: "Email", value: "ziyannifail1011@gmail.com", href: "mailto:ziyannifail1011@gmail.com" },
@@ -31,7 +43,7 @@ export default function Contact() {
       id="contact"
       style={{
         background: "var(--deep)",
-        padding: "120px 48px",
+        padding: mobile ? "80px 20px" : "120px 48px",
         position: "relative",
         overflow: "hidden",
       }}
@@ -156,7 +168,7 @@ export default function Contact() {
         </div>
 
         {/* CTA buttons */}
-        <div style={{ display: "flex", gap: "16px", marginTop: "48px" }}>
+        <div style={{ display: "flex", flexDirection: mobile ? "column" : "row", gap: "16px", marginTop: "48px" }}>
           <a
             href="mailto:ziyannifail1011@gmail.com"
             style={{
@@ -222,8 +234,10 @@ export default function Contact() {
           paddingTop: "32px",
           borderTop: "1px solid rgba(102,155,188,0.1)",
           display: "flex",
+          flexDirection: mobile ? "column" : "row",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: mobile ? "flex-start" : "center",
+          gap: mobile ? "8px" : "0",
         }}
       >
         <span
